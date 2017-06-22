@@ -8,7 +8,7 @@ This library is written with ES7 `async await` so using a browser that supports 
 
 ## Usage
 
-###Initialize
+### Initialize
 
 ```javascript
 async function init() {
@@ -17,7 +17,7 @@ async function init() {
 	await websql.connect([options])
 }
 ```
-####Options (all optional)
+### # Options (all optional)
 
 * **db** database name
 * **description** database description
@@ -26,7 +26,7 @@ async function init() {
 
 --
 
-###Create a Table
+### Create a Table
 
 ```javascript
 let fields = [
@@ -46,7 +46,7 @@ try {
 ```
 **Note** The 3rd parameter is a boolean if you want to use `IF NOT EXISTS`.
 
-###MISC
+### MISC
 
 **List Tables**
 
@@ -88,7 +88,7 @@ try {
 }
 ```
 
-####Field Object
+### # Field Object
 
 When creating tables or listing fields the field object is always used. It consists of the following properties:
 
@@ -103,7 +103,7 @@ When creating tables or listing fields the field object is always used. It consi
 
 `BLOB`, `BOOL`, `CLOB`, `FLOAT`, `INTEGER`, `NUMERIC`, `REAL`, `VARCHAR`, `NVCHAR`, `TEXT`
 
-###Inserting
+### Inserting
 
 ```javascript
 try {
@@ -120,7 +120,7 @@ try {
 }
 ```
 
-###Updating
+### Updating
 
 ```javascript
 try {
@@ -132,7 +132,7 @@ try {
 }
 ```
 
-###Fetching a Record
+### Fetching a Record
 
 ```javascript
 try {
@@ -142,7 +142,7 @@ try {
 }
 ```
 
-###Running a Query
+### Running a Query
 
 ```javascript
 let query = 'SELECT * FROM ' + websql.escapeField(table) + ' WHERE id > ?'
@@ -157,7 +157,7 @@ for(var i = 0; i < results.row.length; i++)
 	console.log('row', i, results.rows.item(i))
 ```
 
-###To Do
+### To Do
 
 * Drop Record
 * Simpler Select Method
