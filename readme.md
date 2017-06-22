@@ -4,7 +4,7 @@ This is a Web SQL library for use in the browser. Very useful in Electron and NW
 
 This library is written with ES7 `async await` so using a browser that supports it is key.
 
-**Note:** You must used this library inside an `async` function.
+**Note:** When using await you must used this library inside an `async` function. It is recommended having a decent amount of knowledge on `SQLite3` which is what WebSQL is using in-browser.
 
 ## Usage
 
