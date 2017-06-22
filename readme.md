@@ -14,17 +14,15 @@ This library is written with ES7 `async await` so using a browser that supports 
 async function init() {
 	const WebSQl = require('./websql')
 	const websql = new WebSQl(options)
-	await websql.connect([options])
+	await websql.connect(options)
 }
 ```
-### # Options (all optional)
+#### Options (all optional)
 
 * **db** database name
 * **description** database description
 * **version** database version
 * **size** (2 * 1024 * 1024)
-
---
 
 ### Create a Table
 
@@ -88,7 +86,7 @@ try {
 }
 ```
 
-### # Field Object
+#### Field Object
 
 When creating tables or listing fields the field object is always used. It consists of the following properties:
 
@@ -114,11 +112,12 @@ try {
 		description: 'This is really great!',
 		entered: now,
 		updated: now
-	})
+	}, false)
 } catch (err) {
 	console.log('Something WENT WRONG', err)
 }
 ```
+**Note** The 3rd parameter is a boolean if you want to use `IGNORE`.
 
 ### Updating
 
