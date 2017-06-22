@@ -1,6 +1,6 @@
 # lib-websql
 
-This is a Web SQL library for use in the browser. Very useful in electron and NW.js Apps. I know Web SQL is deprecated, but browsers have not yet announces it's removal so I am hoping it will stick around a long time or until they replace it with a relational database.
+This is a Web SQL library for use in the browser. Very useful in Electron and NW.js Apps, things that require complex queries. I know Web SQL is deprecated, but browsers have not yet announces it's removal so I am hoping it will stick around a long time or until they replace it with a relational database. It  also might be worth checking out some alternatives like `RxDB`, `PouchDB` or `sql.js`.
 
 This library is written with ES7 `async await` so using a browser that supports it is key.
 
