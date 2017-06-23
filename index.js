@@ -22,24 +22,31 @@ class WebSQL{
 	async transaction () {
 		return new Promise(async (resolve, reject) => {
 			try {
-	    	this.client.transaction((tx) => {
+		  	this.client.transaction((tx) => {
 					resolve(tx)
-	      })
+		    })
 			} catch (err) {
 				reject(err)
 			}
 		})
 	}
 
-	async query (query, values) {
+	async query (query, values, select) {
 		return new Promise(async (resolve, reject) => {
 			try {
-	      let tx = await this.transaction()
-	      tx.executeSql(query, values, (tx, results) => {
-	        resolve(results)
-	      }, function(tx, err) {
+		    let tx = await this.transaction()
+		    tx.executeSql(query, values, (tx, results) => {
+					if (!select) {
+		      	resolve(results)
+					}else{
+						let rows = []
+						for(var i = 0; i < results.rows.length; i++)
+							rows.push(results.rows.item(i))
+		      	resolve(rows)
+					}
+		    }, function(tx, err) {
 					throw err
-	      })
+		    })
 			} catch (err) {
 				reject(err)
 			}
@@ -47,8 +54,8 @@ class WebSQL{
 	}
 
 	async tables (table) {
-	  const query = 'SELECT tbl_name, sql from sqlite_master WHERE type = ?'
-	  const values = ['table']
+		const query = 'SELECT tbl_name, sql from sqlite_master WHERE type = ?'
+		const values = ['table']
 		var results = await this.query(query, values)
 		let tables = []
 		for (let i in results.rows)
@@ -58,8 +65,8 @@ class WebSQL{
 	}
 
 	async tableExists (table) {
-	  const query = 'SELECT * FROM sqlite_master WHERE `type` = ? AND `name` = ?'
-	  const values = ['table', table]
+		const query = 'SELECT * FROM sqlite_master WHERE `type` = ? AND `name` = ?'
+		const values = ['table', table]
 		var results = await this.query(query, values)
 		return results.rows.length == 1 ? true : false
 	}
@@ -83,13 +90,11 @@ class WebSQL{
 	}
 
 	async tableFields (table) {
-	  const query='SELECT * FROM sqlite_master WHERE `type` = ? AND `name` = ?'
-	  const values=['table', table]
+		const query = 'SELECT * FROM sqlite_master WHERE `type` = ? AND `name` = ?'
+		const values = ['table', table]
 		var results = await this.query(query, values)
-
 		if(results.rows.length != 1)
-			return reject('Invalid')
-
+			throw 'Invalid'
 		let parse = results.rows.item(0).sql
 		const index = parse.indexOf('(') + 1
 		parse = parse.substr(index, parse.lastIndexOf(')') - index).split(', ')
@@ -123,13 +128,19 @@ class WebSQL{
 		return await this.query(query)
 	}
 
-	async fetch (table, id) {
-		let query = 'SELECT * FROM ' + this.escapeField(table) + ' WHERE id = ?'
-		let values = [id]
-		var results = await this.query(query, values)
-	  if(results.rows.length!=1)
-	    throw 'Invalid Results'
-		return results.rows.item(0)
+	async fetch (table, where) {
+		let {query, values} = this.buildWhere(where)
+		query = 'SELECT * FROM ' + this.escapeField(table) + ' WHERE ' + query
+		var results = await this.query(query, values, true)
+		if(!results || results.length != 1)
+		  throw 'Invalid Results'
+		return results[0]
+	}
+
+	async select (table, where) {
+		let {query, values} = this.buildWhere(where)
+		query = 'SELECT * FROM ' + this.escapeField(table) + ' WHERE ' + query
+		return await this.query(query, values, true)
 	}
 
 	async insert (table, insert, ignore) {
@@ -139,25 +150,26 @@ class WebSQL{
 			fields.push(this.escapeField(name))
 			values.push(insert[name])
 		}
-	  var query = 'INSERT ' + (ignore ? 'OR IGNORE ' : '') + 'INTO `' + this.escapeField(table) + '` (`' + fields.join('`, `') + '`) VALUES (' + fields.map(x => '?').join(', ') + ')'
+		var query = 'INSERT ' + (ignore ? 'OR IGNORE ' : '') + 'INTO `' + this.escapeField(table) + '` (`' + fields.join('`, `') + '`) VALUES (' + fields.map(x => '?').join(', ') + ')'
 		var results = await this.query(query, values)
 		if(!ignore && !results.rowsAffected)
 			throw 'Nothing Saved'
 		return results.insertId
 	}
 
-	async update (table, id, update) {
+	async update (table, where, update) {
 		let fields = []
-		let values = []
+		let valuesAll = []
+		let {query, values} = this.buildWhere(where)
 		for(let name of Object.keys(update)) {
 			fields.push('`' + this.escapeField(name) + '` = ?')
-			values.push(update[name])
+			valuesAll.push(update[name])
 		}
-	  var query = 'UPDATE `' + this.escapeField(table) + '` SET ' + fields.join(', ') + ' WHERE `id` = ?'
-		values.push(id)
-		var results = await this.query(query, values)
+		query = 'UPDATE `' + this.escapeField(table) + '` SET ' + fields.join(', ') + ' WHERE ' + query
+		valuesAll = [...valuesAll, ...values]
+		var results = await this.query(query, valuesAll)
 		if(!results.rowsAffected)
-			return reject('Nothing Saved')
+			throw 'Nothing Saved'
 	}
 
 	field (options) {
@@ -177,12 +189,24 @@ class WebSQL{
 		}
 		if(typeof options['default'] != 'undefined')
 			field['default'] = options['default']
-	  return field
+		return field
 	}
 
 	escapeField (value) {
 		value = String(value)
 		return value.replace(/[^a-zA-Z0-9_\.]/g, '')
+	}
+
+	buildWhere (where){
+		if(typeof where != 'object')
+			where = {id: where}
+		let query = ''
+		let values = [];
+		for (let name of Object.keys(where)){
+			query += ' AND ' + this.escapeField(name) + ' = ?'
+			values.push(where[name])
+		}
+		return {query: query.substr(5), values}
 	}
 
 }

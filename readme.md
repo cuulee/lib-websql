@@ -135,19 +135,29 @@ try {
 
 ```javascript
 try {
-	const record = await websql.fetch('album', 2)
+	const record = await websql.fetch('album', {id: 2})
 } catch (err) {
 	console.log('Something WENT WRONG', err)
 }
 ```
 
-### Running a Query
+### Fetching Multiple Records
+
+```javascript
+try {
+	const record = await websql.select('album', {idArtist: 1})
+} catch (err) {
+	console.log('Something WENT WRONG', err)
+}
+```
+
+### Running a Query With Results
 
 ```javascript
 let query = 'SELECT * FROM ' + websql.escapeField(table) + ' WHERE id > ?'
 let values = [20]
 try {
-	var results = await websql.query(query, values)
+	var results = await websql.query(query, values, true)
 } catch (err) {
 	console.log('Something WENT WRONG', err)
 	return
@@ -155,6 +165,8 @@ try {
 for(var i = 0; i < results.row.length; i++)
 	console.log('row', i, results.rows.item(i))
 ```
+
+**Note** The 3rd parameter is a boolean if you want processed results, false will return a SQLite results object.
 
 ### To Do
 
