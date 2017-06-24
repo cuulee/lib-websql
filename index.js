@@ -172,6 +172,14 @@ class WebSQL{
 			throw 'Nothing Saved'
 	}
 
+	async delete (table, where) {
+		let {query, values} = this.buildWhere(where)
+		query = 'DELETE FROM `' + this.escapeField(table) + '` WHERE ' + query
+		var results = await this.query(query, values)
+		if(!results.rowsAffected)
+			throw 'Nothing Saved'
+	}
+
 	field (options) {
 		if(typeof options == 'string')
 			options = {name: options}

@@ -168,8 +168,17 @@ for(var i = 0; i < results.row.length; i++)
 
 **Note** The 3rd parameter is a boolean if you want processed results, false will return a SQLite results object.
 
+### Deleting
+
+```javascript
+try {
+	await websql.delete('album', {id: 1})
+} catch (err) {
+	console.log('Something WENT WRONG', err)
+}
+```
+
 ### To Do
 
-* Drop Record
-* Simpler Select Method
-* Table Structure Sync (rather than migrations)
+* Where Operators
+* Table Structure Sync
