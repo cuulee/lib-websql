@@ -1,0 +1,28 @@
+{
+	"name": "lib-websql",
+	"version": "0.1.0",
+	"description": "Web SQL library for use in the browser/electron/nwjs.",
+	"homepage": "https://github.com/gdbate/lib-websql",
+	"author": "Greg Bate <gdbate@gmail.com> (https://github.com/gdbate)",
+	"keywords": [
+		"websql",
+		"sqlite",
+		"sqlit3",
+		"electron",
+		"nw.js",
+		"browser"
+	],
+	"contributors": [
+		"Greg Bate <gdbate@gmail.com> (https://github.com/gdbate)"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/gdbate/lib-websql.git"
+	},
+	"bugs": {
+		"mail": "gdbate@gmail.com",
+		"url": "http://github.com/gdbate/lib-websql/issues"
+	},
+	"license": "MIT",
+	"dependencies": {}
+}
