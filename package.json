@@ -1,6 +1,6 @@
 {
 	"name": "lib-websql",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Web SQL library for use in the browser/electron/nwjs.",
 	"homepage": "https://github.com/gdbate/lib-websql",
 	"author": "Greg Bate <gdbate@gmail.com> (https://github.com/gdbate)",
